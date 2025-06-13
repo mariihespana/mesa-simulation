@@ -1,6 +1,7 @@
 from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from deliveries_model import DeliveryModel, DeliveryAgent
+from visualization import HistogramModule, ScatterPlotModule, StackedAreaChartModule
 
 def agent_portrayal(agent):
     portrayal = {
@@ -17,7 +18,7 @@ def agent_portrayal(agent):
 
 grid = CanvasGrid(agent_portrayal, 50, 50, 500, 500)
 
-chart = ChartModule([
+states_chart = StackedAreaChartModule([
     {"Label": "Satisfeitos", "Color": "green"},
     {"Label": "NaoSatisfeitos", "Color": "orange"},
     {"Label": "Exaustos", "Color": "red"}
@@ -27,6 +28,11 @@ deliveries_chart = ChartModule(
     [
         {"Label": "Pedidos", "Color": "blue"},
     ])
+
+hours_hist = HistogramModule(bins=10, calculation=lambda a: a.hours_worked)
+earnings_hist = HistogramModule(bins=10, calculation=lambda a: a.earnings)
+
+phase_space = ScatterPlotModule(lambda a: a.hours_worked, lambda a: a.earnings)
 
 model_params = {
     "N": 1000,
@@ -38,9 +44,16 @@ model_params = {
 
 server = ModularServer(
     DeliveryModel,
-    [grid, chart, deliveries_chart],
+    [
+        grid,
+        states_chart,
+        deliveries_chart,
+        hours_hist,
+        earnings_hist,
+        phase_space,
+    ],
     "Modelo de Entregadores",
-    model_params
+    model_params,
 )
 
 server.port = 8521
