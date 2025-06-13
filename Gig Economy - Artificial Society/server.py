@@ -23,6 +23,11 @@ chart = ChartModule([
     {"Label": "Exaustos", "Color": "red"}
 ])
 
+deliveries_chart = ChartModule(
+    [
+        {"Label": "Pedidos", "Color": "blue"},
+    ])
+
 model_params = {
     "N": 1000,
     "daily_income_target": 100,
@@ -33,7 +38,7 @@ model_params = {
 
 server = ModularServer(
     DeliveryModel,
-    [grid, chart],
+    [grid, chart, deliveries_chart],
     "Modelo de Entregadores",
     model_params
 )

@@ -74,10 +74,11 @@ class DeliveryModel(Model):
             model_reporters={
                 "Satisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "satisfeito"]),
                 "NaoSatisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "não satisfeito"]),
-                "Exaustos": lambda m: sum([1 for a in m.schedule.agents if a.state == "exausto"])
+                "Exaustos": lambda m: sum([1 for a in m.schedule.agents if a.state == "exausto"]),
+                "Pedidos": lambda m: sum(a.deliveries for a in m.schedule.agents)
             }
         )
 
     def step(self):
-        self.datacollector.collect(self)
         self.schedule.step()
+        self.datacollector.collect(self)
