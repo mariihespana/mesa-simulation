@@ -23,9 +23,9 @@ chart = ChartModule([
 model_params = {
     "N": 50,
     "daily_income_target": 100,
-    "daily_work_limit": 12,
-    "delivery_value_range": (7.5, 10),
-    "delivery_time_range": (30, 60)
+    "daily_work_limit": 8,
+    "delivery_value_range": (8, 15),
+    "delivery_time_range": (30, 60),
 }
 
 server = ModularServer(
@@ -36,5 +36,5 @@ server = ModularServer(
 )
 
 server.port = 8521
-server.running = False  # Encerra se estiver rodando
+server.running = False  # stop previous server if running
 server.launch()

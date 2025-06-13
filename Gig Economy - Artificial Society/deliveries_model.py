@@ -13,15 +13,15 @@ class DeliveryAgent(Agent):
         self.state = "satisfeito"
 
     def step(self):
-        # Simula trabalho em um dia
+        # Each step represents one day of work
         total_hours = 0
         earnings = 0
         while total_hours < self.model.daily_work_limit and earnings < self.model.daily_income_target:
-            delivery_time = self.random.randint(*self.model.delivery_time_range)
-            delivery_value = self.random.randint(*self.model.delivery_value_range)
-            total_hours += delivery_time / 60
-            earnings += delivery_value
-            if total_hours >= 12:
+            minutes = self.random.randint(*self.model.delivery_time_range)
+            value = self.random.uniform(*self.model.delivery_value_range)
+            total_hours += minutes / 60
+            earnings += value
+            if total_hours >= 12:  # don't work more than 12h straight
                 break
 
         self.hours_worked = total_hours
