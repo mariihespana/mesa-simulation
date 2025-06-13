@@ -13,25 +13,52 @@ class DeliveryAgent(Agent):
         self.days_overworked = 0
         self.state = "satisfeito"
 
+        # Define se o entregador trabalha meio período ou período integral
+        if self.random.random() < 0.5:
+            self.work_type = "part_time"
+            self.daily_work_limit = self.random.uniform(
+                *self.model.part_time_work_range
+            )
+            self.daily_income_target = self.random.uniform(
+                *self.model.part_time_income_range
+            )
+        else:
+            self.work_type = "full_time"
+            self.daily_work_limit = self.random.uniform(
+                *self.model.full_time_work_range
+            )
+            self.daily_income_target = self.random.uniform(
+                *self.model.full_time_income_range
+            )
+
     def step(self):
-        # Simula trabalho em um dia
+        """Simula um dia de trabalho do entregador."""
         total_hours = 0
         earnings = 0
         deliveries = 0
-        while total_hours < self.model.daily_work_limit and earnings < self.model.daily_income_target:
-            delivery_time = self.random.randint(*self.model.delivery_time_range)
-            delivery_value = self.random.uniform(*self.model.delivery_value_range)
-            total_hours += delivery_time / 60
-            earnings += delivery_value
-            deliveries += 1
-            if total_hours >= 12:
+
+        # Continua trabalhando enquanto houver horas disponíveis e não atingir a meta
+        while total_hours < self.daily_work_limit and earnings < self.daily_income_target:
+            # Tempo de espera até a próxima entrega
+            wait_time = self.random.uniform(*self.model.wait_time_range)
+            total_hours += wait_time / 60
+            if total_hours >= self.daily_work_limit:
                 break
+
+            # Decide se aceita a entrega
+            if self.random.random() < self.model.acceptance_rate:
+                delivery_time = self.random.randint(*self.model.delivery_time_range)
+                delivery_value = self.random.uniform(*self.model.delivery_value_range)
+                total_hours += delivery_time / 60
+                earnings += delivery_value
+                deliveries += 1
+            # Se não aceitar, volta para o loop e espera a próxima
 
         self.hours_worked = total_hours
         self.earnings = earnings
         self.deliveries = deliveries
 
-        if earnings >= self.model.daily_income_target and total_hours <= 10:
+        if earnings >= self.daily_income_target and total_hours <= 10:
             self.state = "satisfeito"
             self.days_overworked = 0
         elif total_hours > 10:
@@ -52,7 +79,20 @@ class DeliveryAgent(Agent):
 
 
 class DeliveryModel(Model):
-    def __init__(self, N=50, daily_income_target=80, daily_work_limit=12, delivery_value_range=(8, 15), delivery_time_range=(30, 60)):
+    def __init__(
+        self,
+        N=50,
+        daily_income_target=80,
+        daily_work_limit=12,
+        delivery_value_range=(8, 15),
+        delivery_time_range=(30, 60),
+        part_time_work_range=(2, 4),
+        full_time_work_range=(6, 12),
+        part_time_income_range=(20, 50),
+        full_time_income_range=(50, 100),
+        wait_time_range=(15, 30),
+        acceptance_rate=0.8,
+    ):
         super().__init__()
         self.num_agents = N
         self.grid = MultiGrid(50, 50, True)
@@ -62,6 +102,12 @@ class DeliveryModel(Model):
         self.daily_work_limit = daily_work_limit
         self.delivery_value_range = delivery_value_range
         self.delivery_time_range = delivery_time_range
+        self.part_time_work_range = part_time_work_range
+        self.full_time_work_range = full_time_work_range
+        self.part_time_income_range = part_time_income_range
+        self.full_time_income_range = full_time_income_range
+        self.wait_time_range = wait_time_range
+        self.acceptance_rate = acceptance_rate
 
         for i in range(self.num_agents):
             a = DeliveryAgent(i, self)

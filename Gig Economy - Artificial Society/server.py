@@ -30,10 +30,14 @@ deliveries_chart = ChartModule(
 
 model_params = {
     "N": 1000,
-    "daily_income_target": 100,
-    "daily_work_limit": 12,
     "delivery_value_range": (7.5, 10),
-    "delivery_time_range": (30, 60)
+    "delivery_time_range": (30, 60),
+    "part_time_work_range": (2, 4),
+    "full_time_work_range": (6, 12),
+    "part_time_income_range": (20, 50),
+    "full_time_income_range": (50, 100),
+    "wait_time_range": (15, 30),
+    "acceptance_rate": 0.8,
 }
 
 server = ModularServer(
