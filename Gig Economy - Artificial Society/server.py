@@ -12,7 +12,7 @@ def agent_portrayal(agent):
     }
     return portrayal
 
-grid = CanvasGrid(agent_portrayal, 10, 10, 500, 500)
+grid = CanvasGrid(agent_portrayal, 50, 50, 500, 500)
 
 chart = ChartModule([
     {"Label": "Satisfeitos", "Color": "green"},
@@ -21,7 +21,7 @@ chart = ChartModule([
 ])
 
 model_params = {
-    "N": 50,
+    "N": 1000,
     "daily_income_target": 100,
     "daily_work_limit": 12,
     "delivery_value_range": (7.5, 10),

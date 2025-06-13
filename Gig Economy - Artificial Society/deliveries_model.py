@@ -51,7 +51,7 @@ class DeliveryModel(Model):
     def __init__(self, N=50, daily_income_target=80, daily_work_limit=12, delivery_value_range=(8, 15), delivery_time_range=(30, 60)):
         super().__init__()
         self.num_agents = N
-        self.grid = MultiGrid(10, 10, True)
+        self.grid = MultiGrid(50, 50, True)
         self.schedule = RandomActivation(self)
 
         self.daily_income_target = daily_income_target
