@@ -8,7 +8,10 @@ def agent_portrayal(agent):
         "Color": agent.get_color(),
         "Filled": "true",
         "Layer": 0,
-        "r": 0.8
+        "r": 0.8,
+        # Informações exibidas ao clicar no agente
+        "Pedidos": agent.deliveries,
+        "Renda": round(agent.earnings, 2)
     }
     return portrayal
 

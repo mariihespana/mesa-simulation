@@ -9,6 +9,7 @@ class DeliveryAgent(Agent):
         super().__init__(unique_id, model)
         self.hours_worked = 0
         self.earnings = 0
+        self.deliveries = 0
         self.days_overworked = 0
         self.state = "satisfeito"
 
@@ -16,16 +17,19 @@ class DeliveryAgent(Agent):
         # Simula trabalho em um dia
         total_hours = 0
         earnings = 0
+        deliveries = 0
         while total_hours < self.model.daily_work_limit and earnings < self.model.daily_income_target:
             delivery_time = self.random.randint(*self.model.delivery_time_range)
             delivery_value = self.random.uniform(*self.model.delivery_value_range)
             total_hours += delivery_time / 60
             earnings += delivery_value
+            deliveries += 1
             if total_hours >= 12:
                 break
 
         self.hours_worked = total_hours
         self.earnings = earnings
+        self.deliveries = deliveries
 
         if earnings >= self.model.daily_income_target and total_hours <= 10:
             self.state = "satisfeito"
