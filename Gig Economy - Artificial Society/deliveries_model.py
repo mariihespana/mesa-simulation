@@ -4,6 +4,26 @@ from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 
 
+def _compute_hist(data, bins=10):
+    """Return a histogram count list for the given data."""
+    if not data:
+        return [0] * bins
+    min_val = min(data)
+    max_val = max(data)
+    if max_val == min_val:
+        hist = [0] * bins
+        hist[0] = len(data)
+        return hist
+    bin_size = (max_val - min_val) / bins
+    hist = [0] * bins
+    for value in data:
+        index = int((value - min_val) / bin_size)
+        if index >= bins:
+            index = bins - 1
+        hist[index] += 1
+    return hist
+
+
 class DeliveryAgent(Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
@@ -42,6 +62,7 @@ class DeliveryAgent(Agent):
             # Tempo de espera até a próxima entrega
             wait_time = self.random.uniform(*self.model.wait_time_range)
             total_hours += wait_time / 60
+            self.model.wait_times.append(wait_time)
             if total_hours >= self.daily_work_limit:
                 break
 
@@ -52,6 +73,7 @@ class DeliveryAgent(Agent):
                 total_hours += delivery_time / 60
                 earnings += delivery_value
                 deliveries += 1
+                self.model.delivery_values.append(delivery_value)
             # Se não aceitar, volta para o loop e espera a próxima
 
         self.hours_worked = total_hours
@@ -109,6 +131,10 @@ class DeliveryModel(Model):
         self.wait_time_range = wait_time_range
         self.acceptance_rate = acceptance_rate
 
+        # Lists to store values for histograms each step
+        self.delivery_values = []
+        self.wait_times = []
+
         for i in range(self.num_agents):
             a = DeliveryAgent(i, self)
             self.schedule.add(a)
@@ -121,10 +147,15 @@ class DeliveryModel(Model):
                 "Satisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "satisfeito"]),
                 "NaoSatisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "não satisfeito"]),
                 "Exaustos": lambda m: sum([1 for a in m.schedule.agents if a.state == "exausto"]),
-                "Pedidos": lambda m: sum(a.deliveries for a in m.schedule.agents)
+                "Pedidos": lambda m: sum(a.deliveries for a in m.schedule.agents),
+                "DeliveryValueHist": lambda m: _compute_hist(m.delivery_values),
+                "WaitTimeHist": lambda m: _compute_hist(m.wait_times),
             }
         )
 
     def step(self):
+        # Reset per-step logs
+        self.delivery_values.clear()
+        self.wait_times.clear()
         self.schedule.step()
         self.datacollector.collect(self)

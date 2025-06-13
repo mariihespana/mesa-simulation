@@ -1,4 +1,4 @@
-from mesa.visualization.modules import CanvasGrid, ChartModule
+from mesa.visualization.modules import CanvasGrid, ChartModule, HistogramModule
 from mesa.visualization.ModularVisualization import ModularServer
 from deliveries_model import DeliveryModel, DeliveryAgent
 
@@ -28,6 +28,22 @@ deliveries_chart = ChartModule(
         {"Label": "Pedidos", "Color": "blue"},
     ])
 
+value_hist = HistogramModule(
+    list_name="DeliveryValueHist",
+    canvas_height=200,
+    canvas_width=400,
+    bins=10,
+    name="Valores das Entregas",
+)
+
+wait_hist = HistogramModule(
+    list_name="WaitTimeHist",
+    canvas_height=200,
+    canvas_width=400,
+    bins=10,
+    name="Tempo de Espera",
+)
+
 model_params = {
     "N": 1000,
     "delivery_value_range": (7.5, 10),
@@ -42,7 +58,7 @@ model_params = {
 
 server = ModularServer(
     DeliveryModel,
-    [grid, chart, deliveries_chart],
+    [grid, chart, deliveries_chart, value_hist, wait_hist],
     "Modelo de Entregadores",
     model_params
 )
