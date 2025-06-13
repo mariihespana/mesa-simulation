@@ -148,8 +148,8 @@ class DeliveryModel(Model):
                 "NaoSatisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "não satisfeito"]),
                 "Exaustos": lambda m: sum([1 for a in m.schedule.agents if a.state == "exausto"]),
                 "Pedidos": lambda m: sum(a.deliveries for a in m.schedule.agents),
-                "DeliveryValueHist": lambda m: _compute_hist(m.delivery_values),
-                "WaitTimeHist": lambda m: _compute_hist(m.wait_times),
+                **{f"ValueBin{i}": (lambda i: lambda m: _compute_hist(m.delivery_values)[i])(i) for i in range(10)},
+                **{f"WaitBin{i}": (lambda i: lambda m: _compute_hist(m.wait_times)[i])(i) for i in range(10)},
             }
         )
 
