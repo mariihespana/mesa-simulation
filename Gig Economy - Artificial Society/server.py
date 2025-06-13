@@ -17,27 +17,11 @@ def agent_portrayal(agent):
 
 grid = CanvasGrid(agent_portrayal, 50, 50, 500, 500)
 
-chart = ChartModule(
-    [
-        {"Label": "Satisfeitos", "Color": "green"},
-        {"Label": "NaoSatisfeitos", "Color": "orange"},
-        {"Label": "Exaustos", "Color": "red"},
-    ],
-    chart_type="line",
-    title="Estados dos Entregadores",
-    x_label="Ticks",
-    y_label="Agentes",
-)
-
-hours_chart = ChartModule(
-    [
-        {"Label": "HorasTrabalhadas", "Color": "blue"},
-    ],
-    chart_type="scatter",
-    title="Horas Trabalhadas por Tick",
-    x_label="Ticks",
-    y_label="Horas",
-)
+chart = ChartModule([
+    {"Label": "Satisfeitos", "Color": "green"},
+    {"Label": "NaoSatisfeitos", "Color": "orange"},
+    {"Label": "Exaustos", "Color": "red"}
+])
 
 model_params = {
     "N": 1000,
@@ -49,7 +33,7 @@ model_params = {
 
 server = ModularServer(
     DeliveryModel,
-    [grid, chart, hours_chart],
+    [grid, chart],
     "Modelo de Entregadores",
     model_params
 )

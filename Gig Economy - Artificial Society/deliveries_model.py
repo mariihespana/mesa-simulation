@@ -74,8 +74,7 @@ class DeliveryModel(Model):
             model_reporters={
                 "Satisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "satisfeito"]),
                 "NaoSatisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "não satisfeito"]),
-                "Exaustos": lambda m: sum([1 for a in m.schedule.agents if a.state == "exausto"]),
-                "HorasTrabalhadas": lambda m: sum([a.hours_worked for a in m.schedule.agents])
+                "Exaustos": lambda m: sum([1 for a in m.schedule.agents if a.state == "exausto"])
             }
         )
 
