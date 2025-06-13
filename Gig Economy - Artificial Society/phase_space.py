@@ -22,3 +22,5 @@ class PhaseSpaceModule(VisualizationElement):
             y_label,
             data_collector_name,
         )
+
+        VisualizationElement.__init__(self)
