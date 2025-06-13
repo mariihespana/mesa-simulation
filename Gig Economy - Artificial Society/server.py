@@ -1,6 +1,7 @@
 from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from deliveries_model import DeliveryModel, DeliveryAgent
+from phase_space import PhaseSpaceModule
 
 def agent_portrayal(agent):
     portrayal = {
@@ -28,6 +29,8 @@ deliveries_chart = ChartModule(
         {"Label": "Pedidos", "Color": "blue"},
     ])
 
+phase_chart = PhaseSpaceModule()
+
 model_params = {
     "N": 1000,
     "daily_income_target": 100,
@@ -38,7 +41,7 @@ model_params = {
 
 server = ModularServer(
     DeliveryModel,
-    [grid, chart, deliveries_chart],
+    [grid, chart, deliveries_chart, phase_chart],
     "Modelo de Entregadores",
     model_params
 )

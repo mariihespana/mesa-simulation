@@ -75,7 +75,11 @@ class DeliveryModel(Model):
                 "Satisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "satisfeito"]),
                 "NaoSatisfeitos": lambda m: sum([1 for a in m.schedule.agents if a.state == "não satisfeito"]),
                 "Exaustos": lambda m: sum([1 for a in m.schedule.agents if a.state == "exausto"]),
-                "Pedidos": lambda m: sum(a.deliveries for a in m.schedule.agents)
+                "Pedidos": lambda m: sum(a.deliveries for a in m.schedule.agents),
+                "PhaseSpace": lambda m: [
+                    {"x": a.hours_worked, "y": a.earnings}
+                    for a in m.schedule.agents
+                ]
             }
         )
 
