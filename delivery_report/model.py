@@ -47,6 +47,11 @@ class DeliveryAgent(Agent):
                 if self.renda_dia >= self.meta_diaria:
                     self.desligou_app = True
                     self.estado = "Satisfeito"
+            else:
+                # rejeita o pedido, mas contabiliza o tempo de espera
+                self.horas_trabalhadas_dia += tempo_espera
+                tempo_acumulado += tempo_espera
+                tempo_restante -= tempo_espera
             self.historico_pedidos.append({
                 "valor_pedido": round(valor_pedido, 2),
                 "tempo_entrega": tempo_entrega,
@@ -57,8 +62,6 @@ class DeliveryAgent(Agent):
                 "tempo_acumulado": tempo_acumulado,
                 "desligou_app": self.desligou_app,
             })
-            if not aceita:
-                continue
             if tempo_restante <= 0:
                 break
         if self.renda_dia < self.meta_diaria:
