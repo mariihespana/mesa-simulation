@@ -150,7 +150,7 @@ class DeliveryModel(Model):
     def step(self):
         self.current_step += 1
         self.schedule.step()
-        self._save_step_report()
+        # self._save_step_report()
         self.datacollector.collect(self)
 
     def _save_step_report(self):
