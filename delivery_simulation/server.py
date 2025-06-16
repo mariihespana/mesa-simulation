@@ -23,7 +23,7 @@ class DayElement(TextElement):
         return f"Dia: {self.day}"
 
 # grid just for visualization
-grid = CanvasGrid(agent_portrayal, 10, 10, 500, 500)
+grid = CanvasGrid(agent_portrayal, 50, 50, 500, 500)
 
 chart = ChartModule([
     {"Label": "media_renda", "Color": "blue"},
@@ -32,7 +32,7 @@ chart = ChartModule([
 ])
 
 model_params = {
-    "num_agents": Slider("Número de agentes", 10, 1, 100, 1),
+    "num_agents": Slider("Número de agentes", 10, 1, 1000, 1),
     "meta_diaria": Slider("Meta diária", 120, 50, 200, 10),
     "renda_min_min": Slider("Renda mínima/hora mínima", 10, 5, 20, 1),
     "renda_min_max": Slider("Renda mínima/hora máxima", 40, 20, 60, 1),

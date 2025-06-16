@@ -74,7 +74,7 @@ class DeliveryModel(Model):
                  renda_min_max=40, seed=None):
         super().__init__(seed=seed)
         self.schedule = RandomActivation(self)
-        self.grid = MultiGrid(10, 10, torus=False)
+        self.grid = MultiGrid(50, 50, torus=False)
         self.delivery_agents = []  # avoid using reserved name `agents` in Mesa 3+
         for i in range(num_agents):
             agent = DeliveryAgent(i, self, meta_diaria, renda_min_min, renda_min_max)
