@@ -18,7 +18,7 @@ class DeliveryAgent(Agent):
         self.renda_minima_por_hora = random.uniform(renda_min_min, renda_min_max)
         self.trabalha_somente_com_app = random.choice([True, False])
         self.faz_pausa_no_cotidiano = random.choice([True, False])
-        self.exaustao = 0
+        # self.exaustao = 0
         self.reset_daily_vars()
 
     def reset_daily_vars(self):
@@ -49,7 +49,7 @@ class DeliveryAgent(Agent):
         if self.renda_dia < self.meta_diaria:
             self.desligou_app = True
             self.estado = "Não Satisfeito"
-        self.exaustao += self.horas_trabalhadas_dia / 60  # acumula exaustão em horas trabalhadas
+        # self.exaustao += self.horas_trabalhadas_dia / 60  # acumula exaustão em horas trabalhadas
 
     def step(self):
         self.reset_daily_vars()
@@ -65,8 +65,8 @@ def percent_insatisfeitos(model):
     return len(insatisfeitos) / len(model.delivery_agents)
 
 
-def exaustao_media(model):
-    return sum(a.exaustao for a in model.delivery_agents) / len(model.delivery_agents)
+# def exaustao_media(model):
+#     return sum(a.exaustao for a in model.delivery_agents) / len(model.delivery_agents)
 
 
 class DeliveryModel(Model):
@@ -86,7 +86,7 @@ class DeliveryModel(Model):
         self.datacollector = DataCollector({
             "media_renda": media_renda,
             "percent_insatisfeitos": percent_insatisfeitos,
-            "exaustao_media": exaustao_media,
+            # "exaustao_media": exaustao_media,
         })
 
     def step(self):
