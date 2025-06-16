@@ -46,29 +46,20 @@ satisfaction_chart = ChartModule([
     {"Label": "percent_insatisfeitos", "Color": "red"},
 ])
 
-# Chart of cumulative income for each agent. DataCollector returns a dictionary
-# mapping agent labels to values, which ChartModule will plot as one line per
-# key. The color is automatically chosen by the front-end.
-total_income_chart = ChartModule([
-    {"Label": "renda_total_agentes"},
-])
-
 model_params = {
-    "num_agents": Slider("Número de agentes", 10, 1, 100, 1, display_value=True),
-    "meta_diaria": Slider("Meta diária", 120, 50, 200, 10, display_value=True),
-    "valor_pedido_min": Slider("Valor pedido mínimo", 5, 1, 50, 1, display_value=True),
-    "valor_pedido_max": Slider("Valor pedido máximo", 20, 5, 100, 1, display_value=True),
+    "num_agents": Slider("Número de agentes", 10, 1, 100, 1),
+    "meta_diaria": Slider("Meta diária", 120, 50, 200, 10),
+    "valor_pedido_min": Slider("Valor pedido mínimo", 5, 1, 50, 1),
+    "valor_pedido_max": Slider("Valor pedido máximo", 20, 5, 100, 1),
     "tolerancia_percentual": Slider(
         "Tolerância rejeição (%)", 0, -20, 0, 1,
         description="Aceita pedidos até essa porcentagem abaixo da renda mínima"
-        ,
-        display_value=True,
-    ),
+        ),
 }
 
 server = ModularServer(
     DeliveryModel,
-    [grid, DayElement(), income_chart, satisfaction_chart, total_income_chart],
+    [grid, DayElement(), income_chart, satisfaction_chart],
     "Delivery Simulation",
     model_params,
 )
