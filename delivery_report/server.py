@@ -36,10 +36,14 @@ class DayElement(TextElement):
 # grid just for visualization
 grid = CanvasGrid(agent_portrayal, 10, 10, 500, 500)
 
-chart = ChartModule([
-    {"Label": "media_renda", "Color": "blue"},
+income_chart = ChartModule([
+    {"Label": "renda_media_satisfeitos", "Color": "green"},
+    {"Label": "renda_media_insatisfeitos", "Color": "red"},
+])
+
+satisfaction_chart = ChartModule([
+    {"Label": "percent_satisfeitos", "Color": "green"},
     {"Label": "percent_insatisfeitos", "Color": "red"},
-    {"Label": "exaustao_media", "Color": "orange"},
 ])
 
 model_params = {
@@ -49,7 +53,7 @@ model_params = {
 
 server = ModularServer(
     DeliveryModel,
-    [grid, DayElement(), chart],
+    [grid, DayElement(), income_chart, satisfaction_chart],
     "Delivery Simulation",
     model_params,
 )

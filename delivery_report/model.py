@@ -60,9 +60,28 @@ def media_renda(model):
     return sum(a.renda_dia for a in model.delivery_agents) / len(model.delivery_agents)
 
 
+def renda_media_satisfeitos(model):
+    satis = [a for a in model.delivery_agents if a.estado == "Satisfeito"]
+    if satis:
+        return sum(a.renda_dia for a in satis) / len(satis)
+    return 0
+
+
+def renda_media_insatisfeitos(model):
+    insatis = [a for a in model.delivery_agents if a.estado == "Não Satisfeito"]
+    if insatis:
+        return sum(a.renda_dia for a in insatis) / len(insatis)
+    return 0
+
+
 def percent_insatisfeitos(model):
     insatisfeitos = [a for a in model.delivery_agents if a.desligou_app and a.estado == "Não Satisfeito"]
     return len(insatisfeitos) / len(model.delivery_agents)
+
+
+def percent_satisfeitos(model):
+    satisfeitos = [a for a in model.delivery_agents if a.estado == "Satisfeito"]
+    return len(satisfeitos) / len(model.delivery_agents)
 
 
 # def exaustao_media(model):
@@ -84,9 +103,10 @@ class DeliveryModel(Model):
             self.grid.place_agent(agent, (x, y))
             self.delivery_agents.append(agent)
         self.datacollector = DataCollector({
-            "media_renda": media_renda,
+            "renda_media_satisfeitos": renda_media_satisfeitos,
+            "renda_media_insatisfeitos": renda_media_insatisfeitos,
+            "percent_satisfeitos": percent_satisfeitos,
             "percent_insatisfeitos": percent_insatisfeitos,
-            # "exaustao_media": exaustao_media,
         })
 
     def step(self):
