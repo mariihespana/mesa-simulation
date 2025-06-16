@@ -16,4 +16,5 @@ python server.py         # abre interface interativa no navegador
 ```
 
 O script `run.py` executa a simulação por 30 dias para 50 agentes e imprime as estatísticas coletadas. O `server.py` inicia uma interface web com sliders para acompanhar a execução. O `report.py` gera um CSV (`initial_report.csv`) com as variáveis iniciais de cada agente.
+Além disso, a cada passo de simulação é criado o arquivo `step_report.csv` contendo o histórico de pedidos aceitos ou rejeitados por cada agente e os tempos envolvidos.
 

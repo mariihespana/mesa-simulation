@@ -6,3 +6,4 @@ if __name__ == "__main__":
         model.step()
     data = model.datacollector.get_model_vars_dataframe()
     print(data)
+    print("Relatório salvo em step_report.csv")

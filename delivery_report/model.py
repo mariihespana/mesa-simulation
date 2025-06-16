@@ -2,6 +2,7 @@ from mesa import Agent, Model
 from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
 from mesa.space import MultiGrid
+import csv
 import random
 
 
@@ -25,30 +26,46 @@ class DeliveryAgent(Agent):
         self.renda_dia = 0
         self.horas_trabalhadas_dia = 0
         self.desligou_app = False
+        self.historico_pedidos = []
 
     def simulate_day(self):
         tempo_restante = self.tempo_disponivel_dia
+        tempo_acumulado = 0
         while tempo_restante > 0 and not self.desligou_app:
             valor_pedido = random.uniform(5, 20)
             tempo_entrega = random.randint(20, 60)
             tempo_espera = random.randint(5, 30)
             tempo_total = tempo_entrega + tempo_espera
             renda_por_hora = valor_pedido / (tempo_total / 60)
+            aceita = False
             if renda_por_hora >= self.renda_minima_por_hora and self.renda_dia < self.meta_diaria:
+                aceita = True
                 self.renda_dia += valor_pedido
                 self.horas_trabalhadas_dia += tempo_total
+                tempo_acumulado += tempo_total
                 tempo_restante -= tempo_total
                 if self.renda_dia >= self.meta_diaria:
                     self.desligou_app = True
                     self.estado = "Satisfeito"
-            else:
-                # não aceita o pedido e espera novo
+            self.historico_pedidos.append({
+                "valor_pedido": round(valor_pedido, 2),
+                "tempo_entrega": tempo_entrega,
+                "tempo_espera": tempo_espera,
+                "tempo_total": tempo_total,
+                "renda_por_hora": round(renda_por_hora, 2),
+                "aceitou": aceita,
+                "tempo_acumulado": tempo_acumulado,
+                "desligou_app": self.desligou_app,
+            })
+            if not aceita:
                 continue
             if tempo_restante <= 0:
                 break
         if self.renda_dia < self.meta_diaria:
             self.desligou_app = True
             self.estado = "Não Satisfeito"
+            if self.historico_pedidos:
+                self.historico_pedidos[-1]["desligou_app"] = True
         # self.exaustao += self.horas_trabalhadas_dia / 60  # acumula exaustão em horas trabalhadas
 
     def step(self):
@@ -108,7 +125,58 @@ class DeliveryModel(Model):
             "percent_satisfeitos": percent_satisfeitos,
             "percent_insatisfeitos": percent_insatisfeitos,
         })
+        self.current_step = 0
 
     def step(self):
+        self.current_step += 1
         self.schedule.step()
+        self._save_step_report()
         self.datacollector.collect(self)
+
+    def _save_step_report(self):
+        """Append order data for the current step to CSV."""
+        filename = "step_report.csv"
+        write_header = False
+        try:
+            with open(filename, "r"):
+                pass
+        except FileNotFoundError:
+            write_header = True
+        with open(filename, "a", newline="") as f:
+            writer = csv.writer(f)
+            if write_header:
+                writer.writerow([
+                    "step",
+                    "agent_id",
+                    "estado",
+                    "meta_diaria",
+                    "renda_minima_por_hora",
+                    "valor_pedido",
+                    "tempo_entrega",
+                    "tempo_espera",
+                    "tempo_total",
+                    "renda_por_hora",
+                    "aceitou",
+                    "tempo_acumulado",
+                    "desligou_app",
+                ])
+            for ag in self.delivery_agents:
+                for pedido in ag.historico_pedidos:
+                    writer.writerow([
+                        self.current_step,
+                        ag.unique_id,
+                        ag.estado,
+                        ag.meta_diaria,
+                        round(ag.renda_minima_por_hora, 2),
+                        pedido["valor_pedido"],
+                        pedido["tempo_entrega"],
+                        pedido["tempo_espera"],
+                        pedido["tempo_total"],
+                        pedido["renda_por_hora"],
+                        pedido["aceitou"],
+                        pedido["tempo_acumulado"],
+                        pedido["desligou_app"],
+                    ])
+
+
+
