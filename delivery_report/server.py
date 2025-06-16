@@ -49,6 +49,10 @@ satisfaction_chart = ChartModule([
 model_params = {
     "num_agents": Slider("Número de agentes", 10, 1, 100, 1),
     "meta_diaria": Slider("Meta diária", 120, 50, 200, 10),
+    "tolerancia_percentual": Slider(
+        "Tolerância rejeição (%)", 0, -20, 0, 1,
+        description="Aceita pedidos até essa porcentagem abaixo da renda mínima"
+    ),
 }
 
 server = ModularServer(

@@ -38,7 +38,10 @@ class DeliveryAgent(Agent):
             tempo_total = tempo_entrega + tempo_espera
             renda_por_hora = valor_pedido / (tempo_total / 60)
             aceita = False
-            if renda_por_hora >= self.renda_minima_por_hora and self.renda_dia < self.meta_diaria:
+            limite = self.renda_minima_por_hora * (
+                1 + self.model.tolerancia_percentual / 100
+            )
+            if renda_por_hora >= limite and self.renda_dia < self.meta_diaria:
                 aceita = True
                 self.renda_dia += valor_pedido
                 self.horas_trabalhadas_dia += tempo_total
@@ -110,10 +113,11 @@ def percent_satisfeitos(model):
 
 class DeliveryModel(Model):
     def __init__(self, num_agents=10, meta_diaria=120, renda_min_min=10,
-                 renda_min_max=40, seed=None):
+                 renda_min_max=40, tolerancia_percentual=0, seed=None):
         super().__init__(seed=seed)
         self.schedule = RandomActivation(self)
         self.grid = MultiGrid(10, 10, torus=False)
+        self.tolerancia_percentual = tolerancia_percentual
         self.delivery_agents = []  # avoid using reserved name `agents` in Mesa 3+
         for i in range(num_agents):
             agent = DeliveryAgent(i, self, meta_diaria, renda_min_min, renda_min_max)
