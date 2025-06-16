@@ -48,7 +48,7 @@ class DeliveryAgent(Agent):
                 break
         if self.renda_dia < self.meta_diaria:
             self.desligou_app = True
-            self.estado = "Não Satisfeito"
+            self.estado = "Insatisfeito"
         self.exaustao += self.horas_trabalhadas_dia / 60  # acumula exaustão em horas trabalhadas
 
     def step(self):
@@ -61,7 +61,7 @@ def media_renda(model):
 
 
 def percent_insatisfeitos(model):
-    insatisfeitos = [a for a in model.delivery_agents if a.desligou_app and a.estado == "Não Satisfeito"]
+    insatisfeitos = [a for a in model.delivery_agents if a.desligou_app and a.estado == "Insatisfeito"]
     return len(insatisfeitos) / len(model.delivery_agents)
 
 

@@ -19,4 +19,5 @@ O script `run.py` executa a simulação por 30 dias para 50 agentes e imprime as
 Além disso, a cada passo de simulação é criado o arquivo `step_report.csv` contendo o histórico de pedidos aceitos ou rejeitados por cada agente e os tempos envolvidos.
 O slider **Tolerância rejeição (%)** permite ajustar o quanto abaixo da renda mínima por hora um pedido ainda pode ser aceito.
 Os sliders **Valor pedido mínimo** e **Valor pedido máximo** definem o intervalo de valores sorteados para cada pedido na simulação.
+O gráfico "renda_total_agentes" exibe a renda acumulada de cada entregador ao longo dos passos, permitindo avaliar a renda total em qualquer dia da simulação.
 

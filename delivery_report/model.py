@@ -20,6 +20,7 @@ class DeliveryAgent(Agent):
         self.trabalha_somente_com_app = random.choice([True, False])
         self.faz_pausa_no_cotidiano = random.choice([True, False])
         # self.exaustao = 0
+        self.renda_acumulada = 0
         self.reset_daily_vars()
 
     def reset_daily_vars(self):
@@ -71,7 +72,7 @@ class DeliveryAgent(Agent):
                 break
         if self.renda_dia < self.meta_diaria:
             self.desligou_app = True
-            self.estado = "Não Satisfeito"
+            self.estado = "Insatisfeito"
             if self.historico_pedidos:
                 self.historico_pedidos[-1]["desligou_app"] = True
         # self.exaustao += self.horas_trabalhadas_dia / 60  # acumula exaustão em horas trabalhadas
@@ -79,6 +80,7 @@ class DeliveryAgent(Agent):
     def step(self):
         self.reset_daily_vars()
         self.simulate_day()
+        self.renda_acumulada += self.renda_dia
 
 
 def media_renda(model):
@@ -93,20 +95,25 @@ def renda_media_satisfeitos(model):
 
 
 def renda_media_insatisfeitos(model):
-    insatis = [a for a in model.delivery_agents if a.estado == "Não Satisfeito"]
+    insatis = [a for a in model.delivery_agents if a.estado == "Insatisfeito"]
     if insatis:
         return sum(a.renda_dia for a in insatis) / len(insatis)
     return 0
 
 
 def percent_insatisfeitos(model):
-    insatisfeitos = [a for a in model.delivery_agents if a.desligou_app and a.estado == "Não Satisfeito"]
+    insatisfeitos = [a for a in model.delivery_agents if a.desligou_app and a.estado == "Insatisfeito"]
     return len(insatisfeitos) / len(model.delivery_agents)
 
 
 def percent_satisfeitos(model):
     satisfeitos = [a for a in model.delivery_agents if a.estado == "Satisfeito"]
     return len(satisfeitos) / len(model.delivery_agents)
+
+
+def renda_total_agentes(model):
+    """Dict of cumulative income per agent"""
+    return {f"Agente {a.unique_id}": round(a.renda_acumulada, 2) for a in model.delivery_agents}
 
 
 # def exaustao_media(model):
@@ -144,6 +151,7 @@ class DeliveryModel(Model):
             "renda_media_insatisfeitos": renda_media_insatisfeitos,
             "percent_satisfeitos": percent_satisfeitos,
             "percent_insatisfeitos": percent_insatisfeitos,
+            "renda_total_agentes": renda_total_agentes,
         })
         self.current_step = 0
 

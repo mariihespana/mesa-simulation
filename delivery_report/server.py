@@ -46,6 +46,10 @@ satisfaction_chart = ChartModule([
     {"Label": "percent_insatisfeitos", "Color": "red"},
 ])
 
+total_income_chart = ChartModule([
+    {"Label": "renda_total_agentes", "Color": "blue"},
+])
+
 model_params = {
     "num_agents": Slider("Número de agentes", 10, 1, 100, 1),
     "meta_diaria": Slider("Meta diária", 120, 50, 200, 10),
@@ -59,7 +63,7 @@ model_params = {
 
 server = ModularServer(
     DeliveryModel,
-    [grid, DayElement(), income_chart, satisfaction_chart],
+    [grid, DayElement(), income_chart, satisfaction_chart, total_income_chart],
     "Delivery Simulation",
     model_params,
 )
