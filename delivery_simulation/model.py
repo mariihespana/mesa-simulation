@@ -1,20 +1,21 @@
 from mesa import Agent, Model
 from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
+from mesa.space import MultiGrid
 import random
 
 
 class DeliveryAgent(Agent):
     """Entregador de aplicativo"""
 
-    def __init__(self, unique_id, model):
+    def __init__(self, unique_id, model, meta_diaria, renda_min_min, renda_min_max):
         super().__init__(unique_id, model)
         self.estado = "Satisfeito"
         self.hora_entrada = random.randint(10, 20)
         # tempo disponível até 22h
         self.tempo_disponivel_dia = (22 - self.hora_entrada) * 60
-        self.meta_diaria = 120  # Gap preenchido: meta_diaria foi fixada em R$120 por simplicidade
-        self.renda_minima_por_hora = random.uniform(10, 40)
+        self.meta_diaria = meta_diaria  # Gap preenchido: meta_diaria padronizada
+        self.renda_minima_por_hora = random.uniform(renda_min_min, renda_min_max)
         self.trabalha_somente_com_app = random.choice([True, False])
         self.faz_pausa_no_cotidiano = random.choice([True, False])
         self.exaustao = 0
@@ -69,13 +70,18 @@ def exaustao_media(model):
 
 
 class DeliveryModel(Model):
-    def __init__(self, num_agents=10, seed=None):
+    def __init__(self, num_agents=10, meta_diaria=120, renda_min_min=10,
+                 renda_min_max=40, seed=None):
         super().__init__(seed=seed)
         self.schedule = RandomActivation(self)
+        self.grid = MultiGrid(10, 10, torus=False)
         self.delivery_agents = []  # avoid using reserved name `agents` in Mesa 3+
         for i in range(num_agents):
-            agent = DeliveryAgent(i, self)
+            agent = DeliveryAgent(i, self, meta_diaria, renda_min_min, renda_min_max)
             self.schedule.add(agent)
+            x = self.random.randrange(self.grid.width)
+            y = self.random.randrange(self.grid.height)
+            self.grid.place_agent(agent, (x, y))
             self.delivery_agents.append(agent)
         self.datacollector = DataCollector({
             "media_renda": media_renda,
