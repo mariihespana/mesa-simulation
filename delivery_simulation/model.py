@@ -56,27 +56,27 @@ class DeliveryAgent(Agent):
 
 
 def media_renda(model):
-    return sum(a.renda_dia for a in model.agents) / len(model.agents)
+    return sum(a.renda_dia for a in model.delivery_agents) / len(model.delivery_agents)
 
 
 def percent_insatisfeitos(model):
-    insatisfeitos = [a for a in model.agents if a.desligou_app and a.estado == "Não Satisfeito"]
-    return len(insatisfeitos) / len(model.agents)
+    insatisfeitos = [a for a in model.delivery_agents if a.desligou_app and a.estado == "Não Satisfeito"]
+    return len(insatisfeitos) / len(model.delivery_agents)
 
 
 def exaustao_media(model):
-    return sum(a.exaustao for a in model.agents) / len(model.agents)
+    return sum(a.exaustao for a in model.delivery_agents) / len(model.delivery_agents)
 
 
 class DeliveryModel(Model):
     def __init__(self, num_agents=10, seed=None):
         super().__init__(seed=seed)
         self.schedule = RandomActivation(self)
-        self.agents = []
+        self.delivery_agents = []  # avoid using reserved name `agents` in Mesa 3+
         for i in range(num_agents):
             agent = DeliveryAgent(i, self)
             self.schedule.add(agent)
-            self.agents.append(agent)
+            self.delivery_agents.append(agent)
         self.datacollector = DataCollector({
             "media_renda": media_renda,
             "percent_insatisfeitos": percent_insatisfeitos,
