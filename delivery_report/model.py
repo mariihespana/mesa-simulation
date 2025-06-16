@@ -32,7 +32,9 @@ class DeliveryAgent(Agent):
         tempo_restante = self.tempo_disponivel_dia
         tempo_acumulado = 0
         while tempo_restante > 0 and not self.desligou_app:
-            valor_pedido = random.uniform(5, 20)
+            valor_pedido = random.uniform(
+                self.model.valor_pedido_min, self.model.valor_pedido_max
+            )
             tempo_entrega = random.randint(20, 60)
             tempo_espera = random.randint(5, 30)
             tempo_total = tempo_entrega + tempo_espera
@@ -112,12 +114,23 @@ def percent_satisfeitos(model):
 
 
 class DeliveryModel(Model):
-    def __init__(self, num_agents=10, meta_diaria=120, renda_min_min=10,
-                 renda_min_max=40, tolerancia_percentual=0, seed=None):
+    def __init__(
+        self,
+        num_agents=10,
+        meta_diaria=120,
+        renda_min_min=10,
+        renda_min_max=40,
+        valor_pedido_min=5,
+        valor_pedido_max=20,
+        tolerancia_percentual=0,
+        seed=None,
+    ):
         super().__init__(seed=seed)
         self.schedule = RandomActivation(self)
         self.grid = MultiGrid(10, 10, torus=False)
         self.tolerancia_percentual = tolerancia_percentual
+        self.valor_pedido_min = valor_pedido_min
+        self.valor_pedido_max = valor_pedido_max
         self.delivery_agents = []  # avoid using reserved name `agents` in Mesa 3+
         for i in range(num_agents):
             agent = DeliveryAgent(i, self, meta_diaria, renda_min_min, renda_min_max)
