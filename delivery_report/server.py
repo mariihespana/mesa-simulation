@@ -36,20 +36,30 @@ class DayElement(TextElement):
 # grid just for visualization
 grid = CanvasGrid(agent_portrayal, 10, 10, 500, 500)
 
-chart = ChartModule([
-    {"Label": "media_renda", "Color": "blue"},
+income_chart = ChartModule([
+    {"Label": "renda_media_satisfeitos", "Color": "green"},
+    {"Label": "renda_media_insatisfeitos", "Color": "red"},
+])
+
+satisfaction_chart = ChartModule([
+    {"Label": "percent_satisfeitos", "Color": "green"},
     {"Label": "percent_insatisfeitos", "Color": "red"},
-    {"Label": "exaustao_media", "Color": "orange"},
 ])
 
 model_params = {
     "num_agents": Slider("Número de agentes", 10, 1, 100, 1),
-    "meta_diaria": Slider("Meta diária", 120, 50, 200, 10),
+    "meta_diaria": Slider("Meta diária", 90, 50, 200, 10),
+    "valor_pedido_min": Slider("Valor pedido mínimo", 10, 1, 50, 1),
+    "valor_pedido_max": Slider("Valor pedido máximo", 29, 5, 100, 1),
+    "tolerancia_percentual": Slider(
+        "Tolerância rejeição (%)", 0, -10, 0, 1,
+        description="Aceita pedidos até essa porcentagem abaixo da renda mínima"
+        ),
 }
 
 server = ModularServer(
     DeliveryModel,
-    [grid, DayElement(), chart],
+    [grid, DayElement(), income_chart, satisfaction_chart],
     "Delivery Simulation",
     model_params,
 )
